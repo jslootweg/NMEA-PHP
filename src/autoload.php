@@ -6,7 +6,6 @@ spl_autoload_register(function ($class_name)
     
     if (is_readable($file))
     {
-        print "Loading $class_name.";
         require_once $class_name . '.php';
     }
 });

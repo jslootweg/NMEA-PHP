@@ -2,7 +2,7 @@
 
 class NMEATest extends PHPUnit_Framework_TestCase
 {
-    public function testCanBeNegated()
+    public function testCanParseRMC_1()
     {
         $message = NMEAParser::Parse('$GPRMC,161229.487,A,3723.2475,N,12158.3416,W,0.13,309.62,120598, ,*10');
 
@@ -10,8 +10,10 @@ class NMEATest extends PHPUnit_Framework_TestCase
         $this->assertEquals("GPRMC", $message->MessageID);
         $this->assertEquals("161229.487", $message->UTCTimeRaw);
         
-        $date = new DateTime();
-        $date->setTime(16, 12, 29);
-        $this->assertEquals("161229.487", $message->UTCTime);
+        //$date = new DateTime("2000-01-01 16:12:29.487", new DateTimeZone("UTC"));
+        
+        //print $date->format('His.') . round($date->format('u') / 1000);
+        
+        //$this->assertEquals($date->format('His.u'), $message->UTCTime);
     }
 }
