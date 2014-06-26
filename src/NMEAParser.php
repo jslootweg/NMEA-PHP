@@ -32,24 +32,38 @@ class NMEAParser
             throw new Exception("Invalid DMS format for '$dms'");    
         }
         
-        return $d + ($m/60) + (($s*60)/3600);
+        $dec = $d + ($m/60) + (($s*60)/3600);
         
-        /*$degree=(int)($deg_coord/100); //simple way
-        $minutes= $deg_coord-($degree*100);
-        $dotdegree=$minutes/60;
-        $decimal=$degree+$dotdegree;
-        //South latitudes and West longitudes need to return a negative result
-        if (($direction=="S") or ($direction=="W"))
+        if((strncmp($EastingAndNorthing, "S", 1) == 0) || (strncmp($EastingAndNorthing, "E", 1) == 0))
         {
-            $decimal=$decimal*(-1);
+        	$dec = -1 * $dec;
         }
-        $decimal=number_format($decimal,$precision,'.',''); //truncate decimal to $precision places
-        return $decimal;*/
+        
+        return $dec;
+    }
+    
+    public function knotsToMph($knots)
+    {
+    	// 1 Nautical mile is 1.150779 mile
+    	return $knots * 1.150779;
+    }
+    
+    public function knotsToKph($knots)
+    {
+    	// 1 Nautical mile is exactly 1.852 km
+    	return $knots * 1.852;
+    }
+    
+    public function knotsToMs($knots)
+    {
+    	// 1 Knot is 0.514444 m/s
+    	return $knots * 0.514444;
     }
 }
 
 class NMEAMessage
 {
+	protected $raw;
 	protected $raw_split;
     
     private function NMEADateAndTimeToTimestamp($utcTime, $date)
@@ -75,7 +89,28 @@ class NMEAMessage
 	
 	public function __construct($raw_message)
 	{
+		$this->raw = $raw_message;
 		$this->raw_split = preg_split("/,/", $raw_message);
+	}
+	
+	public function IsCheckSumValid()
+	{
+		$charPos = strpos($this->raw, "*");
+		
+		// Get the string between the $ and the *
+        $sub = substr($this->raw, 1, $charPos-1);
+        
+        $res = 0;        
+        for($i=0;$i<strlen($sub);$i++)
+        {
+        	// XOR each byte
+        	$res ^= ord($sub[$i]);
+        }
+        
+        // Convert to hex
+        $calculatedChecksum = dechex($res);
+        
+        return $calculatedChecksum === substr($this->raw, $charPos+1);
 	}
 }
 
@@ -91,5 +126,40 @@ class RMCNMEAMessage extends NMEAMessage
 	public function __construct($raw_message)
 	{
 		parent::__construct($raw_message);
+	}
+	
+	public function getLat()
+	{
+		return NMEAParser::dmsTodecimal($this->raw_split[3], $this->raw_split[4]);
+	}
+	
+	public function getLong()
+	{
+		return NMEAParser::dmsTodecimal($this->raw_split[5], $this->raw_split[6]);
+	}
+	
+	public function getSpeedKnots()
+	{
+		return $this->raw_split[7];
+	}
+	
+	public function getSpeedMph()
+	{
+		return NMEAParser::knotsToMph($this->raw_split[7]);
+	}
+	
+	public function getSpeedKph()
+	{
+		return NMEAParser::knotsToKph($this->raw_split[7]);
+	}
+	
+	public function getSpeedMs()
+	{
+		return NMEAParser::knotsToMs($this->raw_split[7]);
+	}
+	
+	public function getTrueCourse()
+	{
+		return $this->raw_split[8];
 	}
 }
