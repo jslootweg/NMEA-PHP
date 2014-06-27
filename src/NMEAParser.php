@@ -4,12 +4,12 @@ class NMEAParser
 {
     public static function Parse($raw_message)
     {
-    	$message = new RMCNMEAMessage($raw_message);
-    	
-    	return $message;
+        $message = new RMCNMEAMessage($raw_message);
+        
+        return $message;
     }
     
-    public function dmsTodecimal($dms, $EastingAndNorthing)
+    public static function dmsTodecimal($dms, $EastingAndNorthing)
     {
         $split = preg_split("/\./", $dms);
         $strLength = strlen($split[0]);
@@ -36,28 +36,28 @@ class NMEAParser
         
         if((strncmp($EastingAndNorthing, "S", 1) == 0) || (strncmp($EastingAndNorthing, "E", 1) == 0))
         {
-        	$dec = -1 * $dec;
+            $dec = -1 * $dec;
         }
         
         return $dec;
     }
     
-    public function knotsToMph($knots)
+    public static function knotsToMph($knots)
     {
-    	// 1 Nautical mile is 1.150779 mile
-    	return $knots * 1.150779;
+        // 1 Nautical mile is 1.150779 mile
+        return $knots * 1.150779;
     }
     
-    public function knotsToKph($knots)
+    public static function knotsToKph($knots)
     {
-    	// 1 Nautical mile is exactly 1.852 km
-    	return $knots * 1.852;
+        // 1 Nautical mile is exactly 1.852 km
+        return $knots * 1.852;
     }
     
-    public function knotsToMs($knots)
+    public static function knotsToMs($knots)
     {
-    	// 1 Knot is 0.514444 m/s
-    	return $knots * 0.514444;
+        // 1 Knot is 0.514444 m/s
+        return $knots * 0.514444;
     }
 }
 
