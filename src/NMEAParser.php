@@ -34,7 +34,7 @@ class NMEAParser
         
         $dec = $d + ($m/60) + (($s*60)/3600);
         
-        if((strncmp($EastingAndNorthing, "S", 1) == 0) || (strncmp($EastingAndNorthing, "E", 1) == 0))
+        if((strncmp($EastingAndNorthing, "S", 1) == 0) || (strncmp($EastingAndNorthing, "W", 1) == 0))
         {
             $dec = -1 * $dec;
         }
