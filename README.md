@@ -11,6 +11,6 @@ Current Support
 Testing
 -------
 
-NMEA-PHP is build and tested using [PHPUnit](http://phpunit.de).  Once you have this installed and configured on your system you can run all the tests from NMEA-PHP by executing
+NMEA-PHP is built and tested using [PHPUnit](http://phpunit.de).  Once you have this installed and configured on your system you can run all the tests from NMEA-PHP by executing
 
 	phpunit --bootstrap src/autoload.php test/run-tests.php
